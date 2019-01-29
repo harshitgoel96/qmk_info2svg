@@ -2,24 +2,29 @@ import svgwrite
 import http.client
 import json 
 
-BASE_KEY_WIDTH=20
-BASE_KEY_HEIGHT=20
+BASE_KEY_WIDTH=19.05
+BASE_KEY_HEIGHT=19.05
 
 def createSvgForLayout(layoutName,layoutArray):
     dwg = svgwrite.Drawing("{}.svg".format(layoutName))
+    defaultRx=0
+    defaultRy=0
     for keyItem in layoutArray:
         keyItemWidthMultiplier=keyItem.get("w",1)
         keyItemHeighthMultiplier=keyItem.get("h",1)
         keyRotation=keyItem.get("r",0)
+        defaultRx=keyItem.get("rx",defaultRx)
+        defaultRy=keyItem.get("ry",defaultRy)
         if keyRotation!=0:
-           dwg.add(dwg.rect((keyItem["x"]*BASE_KEY_WIDTH,keyItem["y"]*BASE_KEY_WIDTH),(keyItemWidthMultiplier*BASE_KEY_WIDTH,keyItemHeighthMultiplier*BASE_KEY_HEIGHT), 
+           dwg.add(dwg.rect((keyItem["x"]*BASE_KEY_WIDTH,keyItem["y"]*BASE_KEY_HEIGHT),(keyItemWidthMultiplier*BASE_KEY_WIDTH,keyItemHeighthMultiplier*BASE_KEY_HEIGHT), 
                 stroke='red', 
                 stroke_width=1,
                 transform="rotate({} {} {})".format(
                         keyRotation,
-                        (keyItem["x"]*BASE_KEY_WIDTH+(keyItemWidthMultiplier*BASE_KEY_WIDTH/2)),
-                        (keyItem["y"]*BASE_KEY_WIDTH+(keyItemHeighthMultiplier*BASE_KEY_HEIGHT/2)))
+                        defaultRx*BASE_KEY_WIDTH,
+                        defaultRy*BASE_KEY_HEIGHT)
            ))
+           
         else:
             dwg.add(dwg.rect(
                 (keyItem["x"]*BASE_KEY_WIDTH,keyItem["y"]*BASE_KEY_HEIGHT),
